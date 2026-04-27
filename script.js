@@ -1,23 +1,48 @@
 const lines = [
-    "Emma Legrottaglie",
-    "QA Engineer",
-    "Playwright Tester",
-    "MCP Server Integrations",
-    "Technical Writer",
-    "Lifelong Artist"
+    { text: "Emma Legrottaglie", isName: true },
+    { text: "QA Engineer", isName: false },
+    { text: "Playwright Tester", isName: false },
+    { text: "MCP Server Integrations", isName: false },
+    { text: "Technical Writer", isName: false },
+    { text: "Lifelong Artist", isName: false },
+    { text: "emmalegrottaglie@gmail.com", isEmail: true }
 ];
 
-const typingSpeed = 50; // milliseconds per character
-const delayBetweenLines = 800; // milliseconds between lines
+const typingSpeed = 50;
+const delayBetweenLines = 800;
 const consoleContent = document.getElementById('consoleContent');
 const cursor = document.getElementById('cursor');
 
-async function typeText(text) {
-    for (let char of text) {
-        consoleContent.textContent += char;
-        // Auto-scroll to bottom
-        consoleContent.scrollTop = consoleContent.scrollHeight;
-        await sleep(typingSpeed);
+async function typeText(text, isName = false, isEmail = false) {
+    if (isEmail) {
+        const link = document.createElement('a');
+        link.href = 'mailto:emmalegrottaglie@gmail.com';
+        
+        for (let char of text) {
+            link.textContent += char;
+            consoleContent.textContent += char;
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+            await sleep(typingSpeed);
+        }
+        
+        // Replace last characters with actual link
+        const currentText = consoleContent.textContent;
+        consoleContent.innerHTML = currentText.slice(0, -text.length);
+        consoleContent.appendChild(link);
+    } else {
+        for (let char of text) {
+            if (isName) {
+                const span = document.createElement('span');
+                span.style.fontSize = '23px';
+                span.style.fontWeight = 'bold';
+                span.textContent = char;
+                consoleContent.appendChild(span);
+            } else {
+                consoleContent.textContent += char;
+            }
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+            await sleep(typingSpeed);
+        }
     }
 }
 
@@ -27,7 +52,8 @@ function sleep(ms) {
 
 async function animateConsole() {
     for (let i = 0; i < lines.length; i++) {
-        await typeText(lines[i]);
+        const line = lines[i];
+        await typeText(line.text, line.isName, line.isEmail);
         
         if (i < lines.length - 1) {
             consoleContent.textContent += '\n';
@@ -35,9 +61,7 @@ async function animateConsole() {
         }
     }
     
-    // Hide cursor when done
     cursor.classList.add('hidden');
 }
 
-// Start animation when page loads
 window.addEventListener('load', animateConsole);
