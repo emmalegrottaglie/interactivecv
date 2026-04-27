@@ -16,47 +16,39 @@ const consoleContent = document.getElementById('consoleContent');
 const cursor = document.getElementById('cursor');
 
 async function typeText(text, isName = false, isEmail = false, isLinkedIn = false) {
+    let target;
+
     if (isName) {
-        const nameContainer = document.createElement('span');
-        nameContainer.style.fontSize = '23px';
-        nameContainer.style.fontWeight = 'bold';
-        
-        for (let char of text) {
-            nameContainer.textContent += char;
-            consoleContent.innerHTML = '';
-            consoleContent.appendChild(nameContainer.cloneNode(true));
-            consoleContent.scrollTop = consoleContent.scrollHeight;
-            await sleep(typingSpeed);
-        }
+        target = document.createElement('span');
+        target.style.fontSize = '23px';
+        target.style.fontWeight = 'bold';
     } else if (isEmail) {
-        const link = document.createElement('a');
-        link.href = 'mailto:emmalegrottaglie@gmail.com';
-        
-        for (let char of text) {
-            link.textContent += char;
-            consoleContent.innerHTML = '';
-            consoleContent.appendChild(link.cloneNode(true));
-            consoleContent.scrollTop = consoleContent.scrollHeight;
-            await sleep(typingSpeed);
-        }
+        target = document.createElement('a');
+        target.href = 'mailto:emmalegrottaglie@gmail.com';
     } else if (isLinkedIn) {
-        const link = document.createElement('a');
-        link.href = 'https://www.linkedin.com/in/emma-legrottaglie-477ba5290/';
-        link.target = '_blank';
-        
-        for (let char of text) {
-            link.textContent += char;
-            consoleContent.innerHTML = '';
-            consoleContent.appendChild(link.cloneNode(true));
-            consoleContent.scrollTop = consoleContent.scrollHeight;
-            await sleep(typingSpeed);
-        }
+        target = document.createElement('a');
+        target.href = 'https://www.linkedin.com/in/emma-legrottaglie-477ba5290/';
+        target.target = '_blank';
     } else {
-        for (let char of text) {
-            consoleContent.textContent += char;
+        // Plain text — append a text node and grow it in place so the browser
+        // can wrap it cleanly as it lengthens.
+        target = document.createTextNode('');
+        consoleContent.appendChild(target);
+        for (const char of text) {
+            target.data += char;
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
+        return;
+    }
+
+    // Append the element ONCE, then mutate its textContent in place.
+    // This preserves earlier lines and lets the browser wrap correctly.
+    consoleContent.appendChild(target);
+    for (const char of text) {
+        target.textContent += char;
+        consoleContent.scrollTop = consoleContent.scrollHeight;
+        await sleep(typingSpeed);
     }
 }
 
@@ -68,13 +60,13 @@ async function animateConsole() {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         await typeText(line.text, line.isName, line.isEmail, line.isLinkedIn);
-        
+
         if (i < lines.length - 1) {
-            consoleContent.textContent += '\n';
+            consoleContent.appendChild(document.createTextNode('\n'));
             await sleep(delayBetweenLines);
         }
     }
-    
+
     cursor.classList.add('hidden');
 }
 
