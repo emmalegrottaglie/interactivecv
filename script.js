@@ -5,6 +5,7 @@ const lines = [
     { text: "MCP Server Integrations", isName: false },
     { text: "Technical Writer", isName: false },
     { text: "Lifelong Artist", isName: false },
+    { text: "Loves Video Game Lore", isName: false },
     { text: "emmalegrottaglie@gmail.com", isEmail: true }
 ];
 
@@ -17,29 +18,31 @@ async function typeText(text, isName = false, isEmail = false) {
     if (isEmail) {
         const link = document.createElement('a');
         link.href = 'mailto:emmalegrottaglie@gmail.com';
+        link.style.fontSize = '18px';
         
         for (let char of text) {
             link.textContent += char;
-            consoleContent.textContent += char;
+            consoleContent.appendChild(link.cloneNode(true));
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
-        
-        // Replace last characters with actual link
-        const currentText = consoleContent.textContent;
-        consoleContent.innerHTML = currentText.slice(0, -text.length);
+        consoleContent.textContent = consoleContent.textContent.slice(0, -1);
         consoleContent.appendChild(link);
+    } else if (isName) {
+        const span = document.createElement('span');
+        span.style.fontSize = '23px';
+        span.style.fontWeight = 'bold';
+        
+        for (let char of text) {
+            span.textContent += char;
+            consoleContent.textContent = '';
+            consoleContent.appendChild(span.cloneNode(true));
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+            await sleep(typingSpeed);
+        }
     } else {
         for (let char of text) {
-            if (isName) {
-                const span = document.createElement('span');
-                span.style.fontSize = '23px';
-                span.style.fontWeight = 'bold';
-                span.textContent = char;
-                consoleContent.appendChild(span);
-            } else {
-                consoleContent.textContent += char;
-            }
+            consoleContent.textContent += char;
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
