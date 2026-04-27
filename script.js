@@ -5,7 +5,9 @@ const lines = [
     { text: "MCP Server Integrations", isName: false },
     { text: "Technical Writer", isName: false },
     { text: "Lifelong Artist", isName: false },
-    { text: "emmalegrottaglie@gmail.com", isEmail: true }
+    { text: "Loves Video Game Lore", isName: false },
+    { text: "emmalegrottaglie@gmail.com", isEmail: true },
+    { text: "LinkedIn Profile", isLinkedIn: true }
 ];
 
 const typingSpeed = 50;
@@ -13,27 +15,44 @@ const delayBetweenLines = 800;
 const consoleContent = document.getElementById('consoleContent');
 const cursor = document.getElementById('cursor');
 
-async function typeText(text, isName = false, isEmail = false) {
+async function typeText(text, isName = false, isEmail = false, isLinkedIn = false) {
     if (isName) {
+        const nameContainer = document.createElement('span');
+        nameContainer.style.fontSize = '23px';
+        nameContainer.style.fontWeight = 'bold';
+        
         for (let char of text) {
-            const span = document.createElement('span');
-            span.style.fontSize = '23px';
-            span.style.fontWeight = 'bold';
-            span.textContent = char;
-            consoleContent.appendChild(span);
+            nameContainer.textContent += char;
+            consoleContent.innerHTML = '';
+            consoleContent.appendChild(nameContainer.cloneNode(true));
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
     } else if (isEmail) {
+        const link = document.createElement('a');
+        link.href = 'mailto:emmalegrottaglie@gmail.com';
+        
         for (let char of text) {
-            const link = document.createElement('a');
-            link.href = 'mailto:emmalegrottaglie@gmail.com';
-            link.style.fontSize = '18px';
-            link.textContent = char;
-            consoleContent.appendChild(link);
+            link.textContent += char;
+            consoleContent.appendChild(link.cloneNode(true));
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
+        consoleContent.textContent = consoleContent.textContent.slice(0, -text.length);
+        consoleContent.appendChild(link);
+    } else if (isLinkedIn) {
+        const link = document.createElement('a');
+        link.href = 'https://www.linkedin.com/in/emma-legrottaglie-477ba5290/';
+        link.target = '_blank';
+        
+        for (let char of text) {
+            link.textContent += char;
+            consoleContent.appendChild(link.cloneNode(true));
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+            await sleep(typingSpeed);
+        }
+        consoleContent.textContent = consoleContent.textContent.slice(0, -text.length);
+        consoleContent.appendChild(link);
     } else {
         for (let char of text) {
             consoleContent.textContent += char;
@@ -50,7 +69,7 @@ function sleep(ms) {
 async function animateConsole() {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        await typeText(line.text, line.isName, line.isEmail);
+        await typeText(line.text, line.isName, line.isEmail, line.isLinkedIn);
         
         if (i < lines.length - 1) {
             consoleContent.textContent += '\n';
