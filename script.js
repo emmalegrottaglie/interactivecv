@@ -34,12 +34,11 @@ async function typeText(text, isName = false, isEmail = false, isLinkedIn = fals
         
         for (let char of text) {
             link.textContent += char;
+            consoleContent.innerHTML = '';
             consoleContent.appendChild(link.cloneNode(true));
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
-        consoleContent.textContent = consoleContent.textContent.slice(0, -text.length);
-        consoleContent.appendChild(link);
     } else if (isLinkedIn) {
         const link = document.createElement('a');
         link.href = 'https://www.linkedin.com/in/emma-legrottaglie-477ba5290/';
@@ -47,12 +46,11 @@ async function typeText(text, isName = false, isEmail = false, isLinkedIn = fals
         
         for (let char of text) {
             link.textContent += char;
+            consoleContent.innerHTML = '';
             consoleContent.appendChild(link.cloneNode(true));
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
-        consoleContent.textContent = consoleContent.textContent.slice(0, -text.length);
-        consoleContent.appendChild(link);
     } else {
         for (let char of text) {
             consoleContent.textContent += char;
