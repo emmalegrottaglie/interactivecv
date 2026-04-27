@@ -5,7 +5,6 @@ const lines = [
     { text: "MCP Server Integrations", isName: false },
     { text: "Technical Writer", isName: false },
     { text: "Lifelong Artist", isName: false },
-    { text: "Loves Video Game Lore", isName: false },
     { text: "emmalegrottaglie@gmail.com", isEmail: true }
 ];
 
@@ -15,28 +14,23 @@ const consoleContent = document.getElementById('consoleContent');
 const cursor = document.getElementById('cursor');
 
 async function typeText(text, isName = false, isEmail = false) {
-    if (isEmail) {
-        const link = document.createElement('a');
-        link.href = 'mailto:emmalegrottaglie@gmail.com';
-        link.style.fontSize = '18px';
-        
+    if (isName) {
         for (let char of text) {
-            link.textContent += char;
-            consoleContent.appendChild(link.cloneNode(true));
+            const span = document.createElement('span');
+            span.style.fontSize = '23px';
+            span.style.fontWeight = 'bold';
+            span.textContent = char;
+            consoleContent.appendChild(span);
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
-        consoleContent.textContent = consoleContent.textContent.slice(0, -1);
-        consoleContent.appendChild(link);
-    } else if (isName) {
-        const span = document.createElement('span');
-        span.style.fontSize = '23px';
-        span.style.fontWeight = 'bold';
-        
+    } else if (isEmail) {
         for (let char of text) {
-            span.textContent += char;
-            consoleContent.textContent = '';
-            consoleContent.appendChild(span.cloneNode(true));
+            const link = document.createElement('a');
+            link.href = 'mailto:emmalegrottaglie@gmail.com';
+            link.style.fontSize = '18px';
+            link.textContent = char;
+            consoleContent.appendChild(link);
             consoleContent.scrollTop = consoleContent.scrollHeight;
             await sleep(typingSpeed);
         }
