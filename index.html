@@ -1,1 +1,524 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Emma Legrottaglie - Interactive CV</title><link rel="stylesheet" href="style.css"></head><body><div class="console-container"><div class="console-content" id="consoleContent"></div><span class="cursor" id="cursor">_</span></div><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emma Legrottaglie — QA Engineer &amp; Illustrator</title>
+<meta name="description" content="Emma Legrottaglie — QA Engineer at WolframAlpha and illustrator based in Barcelona.">
+
+<!-- ==========================================================================
+     FONTS
+     Display serif: Fraunces  → the illustrator / expressive side
+     Body sans:     Hanken Grotesk → clean, humanist, gentle
+     Utility mono:  JetBrains Mono → the QA / engineering side (dates, labels)
+     ========================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   DESIGN TOKENS
+   ========================================================================== */
+:root{
+  /* Palette derived from the transgender flag: light blue, pink, white.
+     The raw flag colours are too pale for text, so each has a darker,
+     readable partner for type and interactive elements.                  */
+  --blue:       #5BCEFA;   /* flag light blue — fills, spine, decoration  */
+  --blue-ink:   #1C7FB5;   /* readable blue — links, labels, nodes        */
+  --pink:       #F5A9B8;   /* flag pink — star, accents, gradient         */
+  --pink-ink:   #D96E92;   /* deeper rose where pink needs more contrast  */
+  --ink:        #16222E;   /* deep slate: portrait, headings, anchors     */
+  --ink-soft:   #39485A;
+  --panel:      #EAF4FB;   /* soft blue tint: chips, fallbacks            */
+  --panel-line: #D7E7F1;   /* hairlines on the panel                      */
+  --paper:      #FBFCFE;   /* page background (a hair cool of white)      */
+  --text:       #16222E;
+  --muted:      #5E6B7D;
+  --card:       #FFFFFF;
+  --shadow:     0 1px 2px rgba(22,34,46,.04), 0 8px 24px rgba(22,34,46,.06);
+  --shadow-lift:0 4px 10px rgba(22,34,46,.08), 0 18px 40px rgba(28,127,181,.16);
+  --radius:     16px;
+}
+
+/* ==========================================================================
+   RESET / BASE
+   ========================================================================== */
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; }
+
+body{
+  background:var(--paper);
+  color:var(--text);
+  font-family:"Hanken Grotesk", system-ui, sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{ color:var(--blue-ink); text-decoration:none; }
+
+::selection{ background:var(--blue-ink); color:#fff; }
+
+:focus-visible{
+  outline:2.5px solid var(--blue-ink);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+/* ==========================================================================
+   LAYOUT — sticky sidebar (left) + scrolling content (right)
+   ========================================================================== */
+.layout{
+  max-width:1180px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 1.35fr;
+  gap:0;
+  align-items:start;
+}
+
+/* ----- LEFT: the sidebar stays put while the right side scrolls ----------- */
+.sidebar{
+  position:sticky;
+  top:0;
+  align-self:start;
+  min-height:100vh;
+  background:linear-gradient(165deg, #E9F5FD 0%, #FBFCFE 52%, #FDEFF3 100%);
+  padding:clamp(28px, 4vw, 56px);
+  display:flex;
+  flex-direction:column;
+}
+.sidebar-inner{ margin:auto 0; max-width:420px; }
+
+/* Portrait + pink star badge ------------------------------------------------ */
+.portrait-wrap{ position:relative; width:168px; margin-bottom:26px; }
+.portrait{
+  width:168px; height:168px; border-radius:50%;
+  background:radial-gradient(120% 120% at 30% 25%, #2a2750 0%, var(--ink) 70%);
+  color:#cfeefb;
+  display:grid; place-items:center;
+  font-family:"Fraunces", serif;
+  font-size:54px; font-weight:600; letter-spacing:1px;
+  box-shadow:0 12px 30px rgba(22,20,43,.28);
+  overflow:hidden;
+}
+/* If you add a real photo, it fills the circle automatically (see HTML note) */
+.portrait img{ width:100%; height:100%; object-fit:cover; }
+
+.badge{
+  position:absolute; right:-6px; bottom:6px;
+  width:54px; height:54px;
+  color:var(--pink);
+  filter:drop-shadow(0 4px 8px rgba(245,169,184,.55));
+  animation:spin 26s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.eyebrow{
+  font-family:"JetBrains Mono", monospace;
+  font-size:.82rem; font-weight:500; letter-spacing:.06em;
+  color:var(--blue-ink); text-transform:lowercase;
+  margin-bottom:6px;
+}
+.name{
+  font-family:"Fraunces", serif;
+  font-weight:600; font-size:clamp(2.2rem, 4.4vw, 3.25rem);
+  line-height:1.02; letter-spacing:-.01em; color:var(--ink);
+}
+.role{
+  margin-top:12px; font-size:1.06rem; font-weight:600; color:var(--ink-soft);
+}
+.pronoun{
+  font-family:"JetBrains Mono", monospace;
+  font-weight:500; font-size:.78rem; color:var(--muted);
+}
+/* slim trans-flag accent: blue · pink · white · pink · blue */
+.flag-bar{
+  width:108px; height:5px; margin-top:18px; border-radius:999px;
+  background:linear-gradient(90deg,
+    var(--blue) 0%, var(--blue) 20%,
+    var(--pink) 20%, var(--pink) 40%,
+    #ffffff 40%, #ffffff 60%,
+    var(--pink) 60%, var(--pink) 80%,
+    var(--blue) 80%, var(--blue) 100%);
+  box-shadow:0 1px 4px rgba(22,34,46,.12);
+}
+
+/* sidebar sub-blocks */
+.block{ margin-top:30px; }
+.block-title{
+  font-family:"JetBrains Mono", monospace;
+  font-size:.72rem; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted);
+  margin-bottom:12px;
+  display:flex; align-items:center; gap:10px;
+}
+.block-title::after{ content:""; flex:1; height:1px; background:var(--panel-line); }
+
+.about p{ color:var(--ink-soft); font-size:.98rem; }
+.about p + p{ margin-top:12px; }
+
+/* contact list */
+.contact-list{ list-style:none; display:flex; flex-direction:column; gap:11px; }
+.contact-list li{ display:flex; align-items:center; gap:12px; font-size:.95rem; }
+.contact-list svg{ width:18px; height:18px; flex:none; color:var(--blue-ink); }
+.contact-list a{
+  color:var(--ink-soft); transition:color .18s ease, transform .18s ease;
+}
+.contact-list a:hover{ color:var(--blue-ink); transform:translateX(2px); }
+
+/* ----- RIGHT: scrolling content ------------------------------------------- */
+.content{ padding:clamp(40px, 5vw, 72px) clamp(24px, 4vw, 56px); }
+
+.section + .section{ margin-top:clamp(48px, 6vw, 76px); }
+
+.section-title{
+  font-family:"Fraunces", serif;
+  font-weight:600; font-size:clamp(1.7rem, 3vw, 2.2rem);
+  color:var(--ink); letter-spacing:-.01em;
+  margin-bottom:30px;
+  display:flex; align-items:baseline; gap:14px;
+}
+.section-title .count{
+  font-family:"JetBrains Mono", monospace;
+  font-size:.8rem; font-weight:600; color:var(--blue-ink);
+}
+
+/* ==========================================================================
+   SIGNATURE: the timeline spine
+   ========================================================================== */
+.timeline{ list-style:none; position:relative; padding-left:30px; }
+/* the vertical spine */
+.timeline::before{
+  content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px;
+  background:linear-gradient(var(--blue), var(--pink) 70%, var(--panel-line));
+  border-radius:2px;
+}
+
+.tl-item{ position:relative; padding-bottom:26px; }
+.tl-item:last-child{ padding-bottom:0; }
+
+/* the node on the spine */
+.tl-node{
+  position:absolute; left:-30px; top:24px;
+  width:15px; height:15px; border-radius:50%;
+  background:var(--card); border:3px solid var(--blue-ink);
+  transform:translateX(-1px);
+  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.tl-item:hover .tl-node{
+  background:var(--blue-ink);
+  transform:translateX(-1px) scale(1.25);
+  box-shadow:0 0 0 5px rgba(28,127,181,.16);
+}
+
+/* the card */
+.tl-card{
+  background:var(--card); border:1px solid var(--panel-line);
+  border-radius:var(--radius); padding:22px 24px;
+  box-shadow:var(--shadow);
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.tl-item:hover .tl-card{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lift);
+  border-color:transparent;
+}
+.tl-date{
+  font-family:"JetBrains Mono", monospace;
+  font-size:.74rem; font-weight:600; letter-spacing:.04em;
+  color:var(--blue-ink); text-transform:uppercase;
+}
+.tl-role{
+  font-family:"Fraunces", serif; font-weight:600;
+  font-size:1.28rem; color:var(--ink); margin-top:4px;
+}
+.tl-org{ font-weight:600; color:var(--muted); font-size:.95rem; margin-bottom:6px; }
+
+.tl-points{ list-style:none; margin-top:12px; display:flex; flex-direction:column; gap:9px; }
+.tl-points li{ position:relative; padding-left:20px; color:var(--ink-soft); font-size:.95rem; }
+.tl-points li::before{
+  content:""; position:absolute; left:2px; top:.62em;
+  width:6px; height:6px; border-radius:50%; background:var(--pink);
+}
+.tl-points strong{ color:var(--ink); font-weight:700; }
+
+/* ==========================================================================
+   SKILLS
+   ========================================================================== */
+.skill-groups{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:22px; }
+.skill-group{
+  background:var(--card); border:1px solid var(--panel-line);
+  border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.skill-group:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift); }
+.skill-group h3{
+  font-family:"JetBrains Mono", monospace;
+  font-size:.72rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--blue-ink); margin-bottom:14px;
+}
+.chips{ list-style:none; display:flex; flex-wrap:wrap; gap:8px; }
+.chips li{
+  font-size:.85rem; font-weight:500; color:var(--ink-soft);
+  background:var(--panel); border:1px solid var(--panel-line);
+  padding:5px 12px; border-radius:999px;
+  transition:background .18s ease, color .18s ease, transform .18s ease;
+}
+.chips li:hover{ background:var(--blue-ink); color:#fff; transform:translateY(-2px); border-color:transparent; }
+
+/* ==========================================================================
+   EDUCATION
+   ========================================================================== */
+.edu{
+  background:var(--card); border:1px solid var(--panel-line);
+  border-radius:var(--radius); padding:24px 26px; box-shadow:var(--shadow);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.edu:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift); }
+.edu-date{
+  font-family:"JetBrains Mono", monospace; font-size:.74rem; font-weight:600;
+  letter-spacing:.04em; color:var(--blue-ink); text-transform:uppercase;
+}
+.edu-school{ font-family:"Fraunces", serif; font-weight:600; font-size:1.28rem; color:var(--ink); margin-top:4px; }
+.edu-degree{ font-weight:600; color:var(--muted); margin-bottom:10px; }
+.edu p{ color:var(--ink-soft); font-size:.95rem; }
+
+/* ==========================================================================
+   SCROLL REVEAL (vanilla IntersectionObserver — no library)
+   ========================================================================== */
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.is-visible{ opacity:1; transform:none; }
+
+/* ==========================================================================
+   RESPONSIVE — stack to a single column; sidebar stops being sticky
+   ========================================================================== */
+@media (max-width: 880px){
+  .layout{ grid-template-columns:1fr; }
+  .sidebar{ position:static; min-height:0; }
+  .sidebar-inner{ margin:0; max-width:none; }
+  .content{ padding-top:40px; }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY — honour reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+  .reveal{ opacity:1; transform:none; }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- ====================================================================
+       LEFT SIDEBAR  (sticky on desktop)
+       ==================================================================== -->
+  <header class="sidebar">
+    <div class="sidebar-inner">
+
+      <div class="portrait-wrap">
+        <!-- TO ADD YOUR PHOTO: replace the "EL" below with:
+             <img src="assets/emma.jpg" alt="Emma Legrottaglie">
+             (drop the image in an /assets folder in your repo) -->
+        <div class="portrait">EL</div>
+
+        <!-- pink star badge, echoing the template -->
+        <svg class="badge" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
+          <path d="M50 2 L60 30 L90 26 L68 48 L86 74 L56 66 L50 96 L44 66 L14 74 L32 48 L10 26 L40 30 Z"/>
+        </svg>
+      </div>
+
+      <p class="eyebrow">hi! i'm…</p>
+      <h1 class="name">Emma<br>Legrottaglie</h1>
+      <p class="role">QA Engineer &amp; Illustrator <span class="pronoun">(she/her)</span></p>
+      <div class="flag-bar" aria-hidden="true"></div>
+
+      <section class="block about">
+        <h2 class="block-title">About me</h2>
+        <p>I'm an illustrator who fell for tech. I love art and everything around it, I enjoy writing a lot, and I'm endlessly curious about gadgets — always learning and expanding what I know.</p>
+        <p>Working as a QA Engineer is like solving puzzles for a living: I take tricky problems and turn them into simple, clear steps, and I love it. I work with care, communicate gently, and bring patience to every project. Outside of work I draw, design characters and environments, and I love spaceships.</p>
+      </section>
+
+      <section class="block contact">
+        <h2 class="block-title">Get in touch</h2>
+        <ul class="contact-list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+34607829256">+34 607 82 92 56</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+            <a href="mailto:emmalegrottaglie@gmail.com">emmalegrottaglie@gmail.com</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Barcelona, Spain</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+            <a href="https://github.com/emmalegrottaglie" target="_blank" rel="noopener noreferrer">github.com/emmalegrottaglie</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 18.34V10.4H5.67v7.94h2.67zM7 9.24a1.55 1.55 0 1 0 0-3.1 1.55 1.55 0 0 0 0 3.1zm11.34 9.1v-4.36c0-2.33-1.25-3.42-2.91-3.42a2.5 2.5 0 0 0-2.27 1.25v-1.08h-2.67c.04.75 0 7.94 0 7.94h2.67v-4.43c0-.24.02-.48.09-.65.19-.48.62-.97 1.35-.97.96 0 1.34.72 1.34 1.78v4.27h2.67z"/></svg>
+            <a href="https://www.linkedin.com/in/emma-legrottaglie-477ba5290/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </li>
+        </ul>
+      </section>
+
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       RIGHT CONTENT  (scrolls)
+       ==================================================================== -->
+  <main class="content">
+
+    <!-- EXPERIENCE ------------------------------------------------------- -->
+    <section class="section" id="experience">
+      <h2 class="section-title">Experience</h2>
+      <ol class="timeline">
+
+        <li class="tl-item reveal">
+          <span class="tl-node" aria-hidden="true"></span>
+          <div class="tl-card">
+            <span class="tl-date">Apr 2022 — Present</span>
+            <h3 class="tl-role">QA Engineer</h3>
+            <p class="tl-org">WolframAlpha</p>
+            <ul class="tl-points">
+              <li><strong>Playwright test writing in JavaScript</strong> — built and maintain WolframAlpha's first Playwright frontend testing suite.</li>
+              <li><strong>Wolfram Language</strong> — our tools are built in it; I use it daily to tinker with and improve them.</li>
+              <li><strong>JIRA workflows</strong> — tracking projects, features, and tasks day to day.</li>
+              <li><strong>Bug reporting</strong> — detailed reports backed by thorough investigation.</li>
+              <li><strong>Technical writing</strong> — clear step-by-step testing docs kept as markup files in our repos.</li>
+              <li><strong>MCP server setups &amp; debugging</strong> — researching new AI coding agents and adding them to our Wolfram Language MCP support package.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="tl-item reveal">
+          <span class="tl-node" aria-hidden="true"></span>
+          <div class="tl-card">
+            <span class="tl-date">Mar 2018 — Mar 2022</span>
+            <h3 class="tl-role">Medical Interpreter</h3>
+            <p class="tl-org">Language Link / Voyce</p>
+            <ul class="tl-points">
+              <li>Over-the-phone English↔Spanish interpreter for US hospitals, covering medical and customer-service calls.</li>
+              <li>Handled sensitive, confidential medical information in full compliance with <strong>HIPAA</strong>.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="tl-item reveal">
+          <span class="tl-node" aria-hidden="true"></span>
+          <div class="tl-card">
+            <span class="tl-date">Freelance</span>
+            <h3 class="tl-role">Illustrator</h3>
+            <p class="tl-org">Self-employed</p>
+            <ul class="tl-points">
+              <li>Digital artist focused on <strong>character design</strong> and landscapes.</li>
+              <li>Figure drawing focused on anatomy — muscle and bone structure.</li>
+              <li>Painting in digital, acrylic, and oil.</li>
+            </ul>
+          </div>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- SKILLS ----------------------------------------------------------- -->
+    <section class="section" id="skills">
+      <h2 class="section-title">Skills</h2>
+      <div class="skill-groups">
+
+        <div class="skill-group reveal">
+          <h3>Testing &amp; QA</h3>
+          <ul class="chips">
+            <li>Playwright</li><li>Selenium IDE</li><li>Postman API testing</li>
+            <li>PR reviews</li><li>Early-cycle testing</li><li>Bug reporting</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Languages</h3>
+          <ul class="chips">
+            <li>JavaScript</li><li>Python</li><li>HTML</li><li>Wolfram Language</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Tools</h3>
+          <ul class="chips">
+            <li>Git</li><li>Sourcetree</li><li>Stash</li><li>JIRA</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Craft</h3>
+          <ul class="chips">
+            <li>Technical writing</li><li>Documentation</li>
+            <li>Clear communication</li><li>User advocacy</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Design</h3>
+          <ul class="chips">
+            <li>Photoshop</li><li>Illustrator</li>
+            <li>Character design</li><li>Traditional &amp; digital painting</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- EDUCATION -------------------------------------------------------- -->
+    <section class="section" id="education">
+      <h2 class="section-title">Education</h2>
+      <div class="edu reveal">
+        <span class="edu-date">Apr 2013 — May 2016</span>
+        <h3 class="edu-school">I.U.P. "Santiago Mariño", Maracay</h3>
+        <p class="edu-degree">Systems Engineering</p>
+        <p>A degree focused on the software development lifecycle (SDLC), iterative testing, and system optimization — a systems-thinking approach to QA that keeps software technically sound, thoroughly tested, and aligned with broader organizational architecture and user-experience goals.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ==========================================================================
+   SCROLL REVEAL
+   Reveals .reveal elements as they enter the viewport. Pure vanilla JS —
+   no AOS/GSAP dependency. If a browser lacks IntersectionObserver, everything
+   is shown immediately (graceful fallback).
+   ========================================================================== */
+(function () {
+  const items = document.querySelectorAll('.reveal');
+
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // small stagger so items in the same batch cascade in
+        entry.target.style.transitionDelay = (i * 70) + 'ms';
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  items.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
