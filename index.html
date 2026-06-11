@@ -68,29 +68,32 @@ a{ color:var(--blue-ink); text-decoration:none; }
 }
 
 /* ==========================================================================
-   LAYOUT — sticky sidebar (left) + scrolling content (right)
+   LAYOUT — two independently-scrolling columns inside a viewport-height frame
    ========================================================================== */
 .layout{
   max-width:1180px;
   margin:0 auto;
+  height:100vh;          /* frame is exactly one screen tall …            */
+  overflow:hidden;       /* … and never scrolls itself; the columns do.   */
   display:grid;
   grid-template-columns:minmax(0,1fr) 1.35fr;
   gap:0;
   align-items:start;
 }
 
-/* ----- LEFT: the sidebar stays put while the right side scrolls ----------- */
+/* ----- LEFT: sidebar scrolls on its own only when its content overflows -- */
 .sidebar{
-  position:sticky;
-  top:0;
-  align-self:start;
-  min-height:100vh;
+  height:100vh;
+  overflow-y:auto;
   background:linear-gradient(165deg, #E9F5FD 0%, #FBFCFE 52%, #FDEFF3 100%);
   padding:clamp(28px, 4vw, 56px);
   display:flex;
   flex-direction:column;
+  /* "safe center" centres the content when it fits, but falls back to
+     top-alignment when it's taller than the screen, so nothing gets clipped. */
+  justify-content:safe center;
 }
-.sidebar-inner{ margin:auto 0; max-width:420px; }
+.sidebar-inner{ max-width:420px; width:100%; }
 
 /* Portrait + pink star badge ------------------------------------------------ */
 .portrait-wrap{ position:relative; width:168px; margin-bottom:26px; }
@@ -105,7 +108,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
   overflow:hidden;
 }
 /* If you add a real photo, it fills the circle automatically (see HTML note) */
-.portrait img{ width:100%; height:100%; object-fit:cover; }
+.portrait img{ width:100%; height:100%; object-fit:cover; object-position:center 15%; }
 
 .badge{
   position:absolute; right:-6px; bottom:6px;
@@ -170,7 +173,21 @@ a{ color:var(--blue-ink); text-decoration:none; }
 .contact-list a:hover{ color:var(--blue-ink); transform:translateX(2px); }
 
 /* ----- RIGHT: scrolling content ------------------------------------------- */
-.content{ padding:clamp(40px, 5vw, 72px) clamp(24px, 4vw, 56px); }
+.content{
+  height:100vh;
+  overflow-y:auto;
+  padding:clamp(40px, 5vw, 72px) clamp(24px, 4vw, 56px);
+}
+
+/* subtle, thin scrollbars so the two scroll areas don't look heavy */
+.sidebar, .content{ scrollbar-width:thin; scrollbar-color:var(--panel-line) transparent; }
+.sidebar::-webkit-scrollbar, .content::-webkit-scrollbar{ width:10px; }
+.sidebar::-webkit-scrollbar-track, .content::-webkit-scrollbar-track{ background:transparent; }
+.sidebar::-webkit-scrollbar-thumb, .content::-webkit-scrollbar-thumb{
+  background:var(--panel-line); border-radius:10px;
+  border:3px solid transparent; background-clip:content-box;
+}
+.sidebar::-webkit-scrollbar-thumb:hover, .content::-webkit-scrollbar-thumb:hover{ background:var(--blue-ink); }
 
 .section + .section{ margin-top:clamp(48px, 6vw, 76px); }
 
@@ -401,10 +418,11 @@ a{ color:var(--blue-ink); text-decoration:none; }
    RESPONSIVE — stack to a single column; sidebar stops being sticky
    ========================================================================== */
 @media (max-width: 880px){
-  .layout{ grid-template-columns:1fr; }
-  .sidebar{ position:static; min-height:0; }
-  .sidebar-inner{ margin:0; max-width:none; }
-  .content{ padding-top:40px; }
+  /* stack to one column and return to normal whole-page scrolling */
+  .layout{ grid-template-columns:1fr; height:auto; overflow:visible; }
+  .sidebar{ height:auto; overflow:visible; justify-content:flex-start; }
+  .sidebar-inner{ max-width:none; }
+  .content{ height:auto; overflow:visible; padding-top:40px; }
 }
 
 /* ==========================================================================
@@ -430,7 +448,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
       <div class="portrait-wrap">
         <!-- Your photo now lives at assets/emma-photo.jpg. If that file is
              ever missing, the circle falls back to the "EL" monogram. -->
-        <div class="portrait"><img src="assets/emma-photo.jpg" alt="Emma Legrottaglie" onerror="this.style.display='none'"></div>
+        <div class="portrait"><img src="assets/emma-photo.jpg" alt="Emma Legrottaglie"></div>
 
         <!-- pink star badge, echoing the template -->
         <svg class="badge" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
@@ -794,30 +812,37 @@ const artworks = [
 <script>
 /* ==========================================================================
    SCROLL REVEAL
-   Reveals .reveal elements as they enter the viewport. Pure vanilla JS —
-   no AOS/GSAP dependency. If a browser lacks IntersectionObserver, everything
-   is shown immediately (graceful fallback).
+   Reveals .reveal elements as they enter the viewport. Uses a viewport-rect
+   check (getBoundingClientRect) rather than IntersectionObserver, because the
+   right column is its own scroll container — a rect check is viewport-relative
+   and works no matter which element is doing the scrolling (window OR column).
    ========================================================================== */
 (function () {
-  const items = document.querySelectorAll('.reveal');
+  let items = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  const content = document.querySelector('.content');
 
-  if (!('IntersectionObserver' in window)) {
-    items.forEach(el => el.classList.add('is-visible'));
-    return;
+  function check() {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const justRevealed = [];
+    items.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.92 && r.bottom > 0) justRevealed.push(el);
+    });
+    // stagger the ones revealed together so they cascade in
+    justRevealed.forEach((el, i) => {
+      el.style.transitionDelay = (i * 60) + 'ms';
+      el.classList.add('is-visible');
+    });
+    if (justRevealed.length) {
+      items = items.filter(el => !el.classList.contains('is-visible'));
+    }
   }
 
-  const io = new IntersectionObserver((entries, obs) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        // small stagger so items in the same batch cascade in
-        entry.target.style.transitionDelay = (i * 70) + 'ms';
-        entry.target.classList.add('is-visible');
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-
-  items.forEach(el => io.observe(el));
+  // run on first paint, and on any scroll/resize (window + the column)
+  requestAnimationFrame(check);
+  window.addEventListener('scroll',  check, { passive: true });
+  window.addEventListener('resize',  check, { passive: true });
+  if (content) content.addEventListener('scroll', check, { passive: true });
 })();
 </script>
 </body>
