@@ -418,10 +418,9 @@ a{ color:var(--blue-ink); text-decoration:none; }
     <div class="sidebar-inner">
 
       <div class="portrait-wrap">
-        <!-- TO ADD YOUR PHOTO: replace the "EL" below with:
-             <img src="assets/emma.jpg" alt="Emma Legrottaglie">
-             (drop the image in an /assets folder in your repo) -->
-        <div class="portrait">EL</div>
+        <!-- Your photo now lives at assets/emma-photo.jpg. If that file is
+             ever missing, the circle falls back to the "EL" monogram. -->
+        <div class="portrait">EL<img src="assets/emma-photo.jpg" alt="Emma Legrottaglie" onerror="this.style.display='none'"></div>
 
         <!-- pink star badge, echoing the template -->
         <svg class="badge" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
@@ -627,14 +626,13 @@ a{ color:var(--blue-ink); text-decoration:none; }
    ========================================================================== */
 const artworks = [
   { src: "assets/art/brightmoon-castle.jpg", title: "Brightmoon Castle (She-Ra)", cat: "Illustration" },
-  { src: "assets/art/character-design.jpg",  title: "Character Design",            cat: "Illustration" },
-  { src: "assets/art/spaceship.jpg",         title: "Spaceship Concept",           cat: "Illustration" },
-  { src: "assets/art/skull-graphite.jpg",    title: "Skull Study — graphite",      cat: "Traditional Art" },
-  { src: "assets/art/skull-charcoal.jpg",    title: "Skull Study — charcoal",      cat: "Traditional Art" },
-  { src: "assets/art/torso-study.jpg",       title: "Shoulder & Torso Study",      cat: "Traditional Art" },
-  { src: "assets/art/pelvis-study.jpg",      title: "Pelvis Study",                cat: "Traditional Art" },
-  { src: "assets/art/figure-study.jpg",      title: "Figure Study",                cat: "Digital Art" },
-  { src: "assets/art/seated-figure.jpg",     title: "Seated Figure",               cat: "Digital Art" }
+  { src: "assets/art/concept-sketch.jpg",    title: "Concept Sketch",             cat: "Illustration" },
+  { src: "assets/art/torso-study.jpg",       title: "Shoulder & Torso Study",     cat: "Traditional Art" },
+  { src: "assets/art/pelvis-study.jpg",      title: "Pelvis Study",               cat: "Traditional Art" },
+  { src: "assets/art/skull-graphite.jpg",    title: "Skull Study — graphite",     cat: "Traditional Art" },
+  { src: "assets/art/skull-charcoal.jpg",    title: "Skull Study — charcoal",     cat: "Traditional Art" },
+  { src: "assets/art/figure-study.jpg",      title: "Figure Study",               cat: "Digital Art" },
+  { src: "assets/art/seated-figure.jpg",     title: "Seated Figure",              cat: "Digital Art" }
 ];
 
 (function () {
