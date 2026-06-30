@@ -6,6 +6,21 @@
 <title>Emma Legrottaglie — QA Engineer &amp; Illustrator</title>
 <meta name="description" content="Emma Legrottaglie — QA Engineer at WolframAlpha and illustrator based in Barcelona.">
 
+<!-- Set the theme BEFORE the page paints, so there's no flash of the wrong
+     theme. Reads a saved choice, else follows the OS preference. Storage is
+     wrapped in try/catch so it can't error in restricted sandboxes. -->
+<script>
+(function () {
+  var theme;
+  try { theme = localStorage.getItem('theme'); } catch (e) {}
+  if (!theme) {
+    theme = (window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches)
+            ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
 <!-- ==========================================================================
      FONTS
      Display serif: Fraunces  → the illustrator / expressive side
@@ -39,6 +54,31 @@
   --shadow:     0 1px 2px rgba(22,34,46,.04), 0 8px 24px rgba(22,34,46,.06);
   --shadow-lift:0 4px 10px rgba(22,34,46,.08), 0 18px 40px rgba(28,127,181,.16);
   --radius:     16px;
+  /* themeable backgrounds (so dark mode can override them) */
+  --sidebar-bg: linear-gradient(165deg, #E9F5FD 0%, #FBFCFE 52%, #FDEFF3 100%);
+  --accent-strong: #1C7FB5;  /* fills that sit under white text            */
+}
+
+/* ----- DARK THEME -----------------------------------------------------------
+   Keeps the trans-flag identity (blue + pink stay) but on dark surfaces.
+   The flag colours move to decoration; text accents lighten for contrast. */
+[data-theme="dark"]{
+  --blue:       #5BCEFA;
+  --blue-ink:   #79C7EE;   /* lighter so it reads on dark backgrounds      */
+  --pink:       #F5A9B8;
+  --pink-ink:   #F3A6BD;
+  --ink:        #EAF1F8;   /* headings / strong text now light             */
+  --ink-soft:   #C2D2DF;
+  --panel:      #1D2C38;   /* chips, fallbacks                             */
+  --panel-line: #2C3F4D;   /* hairlines                                    */
+  --paper:      #0E1820;   /* page background                              */
+  --text:       #EAF1F8;
+  --muted:      #93A6B4;
+  --card:       #16242F;
+  --shadow:     0 1px 2px rgba(0,0,0,.32), 0 8px 24px rgba(0,0,0,.36);
+  --shadow-lift:0 4px 10px rgba(0,0,0,.42), 0 18px 40px rgba(91,206,250,.18);
+  --sidebar-bg: linear-gradient(165deg, #182934 0%, #0E1820 52%, #1E1722 100%);
+  --accent-strong: #2F84BE; /* still dark enough for white text            */
 }
 
 /* ==========================================================================
@@ -85,7 +125,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
 .sidebar{
   height:100vh;
   overflow-y:auto;
-  background:linear-gradient(165deg, #E9F5FD 0%, #FBFCFE 52%, #FDEFF3 100%);
+  background:var(--sidebar-bg);
   padding:clamp(28px, 4vw, 56px);
   display:flex;
   flex-direction:column;
@@ -99,7 +139,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
 .portrait-wrap{ position:relative; width:168px; margin-bottom:26px; }
 .portrait{
   width:168px; height:168px; border-radius:50%;
-  background:radial-gradient(120% 120% at 30% 25%, #2a2750 0%, var(--ink) 70%);
+  background:radial-gradient(120% 120% at 30% 25%, #2a2750 0%, #14121f 70%);
   color:#cfeefb;
   display:grid; place-items:center;
   font-family:"Fraunces", serif;
@@ -284,7 +324,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
   padding:5px 12px; border-radius:999px;
   transition:background .18s ease, color .18s ease, transform .18s ease;
 }
-.chips li:hover{ background:var(--blue-ink); color:#fff; transform:translateY(-2px); border-color:transparent; }
+.chips li:hover{ background:var(--accent-strong); color:#fff; transform:translateY(-2px); border-color:transparent; }
 
 /* ==========================================================================
    EDUCATION
@@ -318,7 +358,7 @@ a{ color:var(--blue-ink); text-decoration:none; }
 }
 .filter-btn:hover{ transform:translateY(-2px); }
 .filter-btn[aria-pressed="true"]{
-  background:var(--blue-ink); color:#fff; border-color:transparent;
+  background:var(--accent-strong); color:#fff; border-color:transparent;
 }
 
 /* masonry via CSS columns — art keeps its natural aspect ratio */
@@ -361,14 +401,14 @@ a{ color:var(--blue-ink); text-decoration:none; }
 .art-card:hover .art-img{ transform:scale(1.04); }
 
 .art-cap{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  display:flex; flex-direction:column; align-items:flex-start; gap:5px;
   padding:13px 16px;
 }
-.art-title{ font-weight:600; color:var(--ink); font-size:.95rem; }
+.art-title{ font-weight:600; color:var(--ink); font-size:.95rem; line-height:1.25; }
 .art-tag{
   font-family:"JetBrains Mono", monospace;
   font-size:.66rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
-  color:var(--blue-ink); white-space:nowrap;
+  color:var(--blue-ink);
 }
 
 /* lightbox */
@@ -409,7 +449,70 @@ a{ color:var(--blue-ink); text-decoration:none; }
 @media (max-width:560px){ .lb-prev{ left:8px; } .lb-next{ right:8px; } }
 
 /* ==========================================================================
-   SCROLL REVEAL (vanilla IntersectionObserver — no library)
+   PROJECTS
+   ========================================================================== */
+.project-card{
+  background:var(--card); border:1px solid var(--panel-line);
+  border-radius:var(--radius); padding:24px 26px; box-shadow:var(--shadow);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.project-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift); }
+.project-head{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:16px; flex-wrap:wrap; margin-bottom:12px;
+}
+.project-title{ font-family:"Fraunces", serif; font-weight:600; font-size:1.3rem; color:var(--ink); }
+.project-sub{
+  font-family:"JetBrains Mono", monospace; font-size:.72rem; font-weight:600;
+  letter-spacing:.04em; text-transform:uppercase; color:var(--blue-ink); margin-top:4px;
+}
+.project-link{
+  display:inline-flex; align-items:center; gap:7px; flex:none;
+  font-size:.84rem; font-weight:600; color:#fff; background:var(--accent-strong);
+  padding:8px 14px; border-radius:999px;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.project-link:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lift); }
+.project-link svg{ width:16px; height:16px; }
+.project-card > p{ color:var(--ink-soft); font-size:.97rem; }
+.project-points{ list-style:none; margin:14px 0 16px; display:flex; flex-direction:column; gap:9px; }
+.project-points li{ position:relative; padding-left:20px; color:var(--ink-soft); font-size:.95rem; }
+.project-points li::before{
+  content:""; position:absolute; left:2px; top:.62em;
+  width:6px; height:6px; border-radius:50%; background:var(--pink);
+}
+.project-points strong{ color:var(--ink); font-weight:700; }
+code{
+  font-family:"JetBrains Mono", monospace; font-size:.86em;
+  background:var(--panel); color:var(--blue-ink);
+  padding:1px 6px; border-radius:5px;
+}
+
+/* ==========================================================================
+   THEME TOGGLE
+   ========================================================================== */
+.theme-toggle{
+  position:fixed; top:18px; right:18px; z-index:40;
+  width:44px; height:44px; border-radius:50%;
+  display:grid; place-items:center; cursor:pointer;
+  background:var(--card); color:var(--blue-ink);
+  border:1px solid var(--panel-line); box-shadow:var(--shadow);
+  transition:transform .2s ease, box-shadow .2s ease, background .3s ease, color .3s ease;
+}
+.theme-toggle:hover{ transform:translateY(-2px) rotate(-8deg); box-shadow:var(--shadow-lift); }
+.theme-toggle svg{ width:21px; height:21px; }
+.theme-toggle .icon-sun{ display:none; }
+[data-theme="dark"] .theme-toggle .icon-sun{ display:block; }
+[data-theme="dark"] .theme-toggle .icon-moon{ display:none; }
+
+/* smooth fade when switching themes */
+body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
+.theme-toggle, .filter-btn, .chips li, .art-card{
+  transition:background-color .3s ease, color .3s ease, border-color .3s ease;
+}
+
+/* ==========================================================================
+   SCROLL REVEAL
    ========================================================================== */
 .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
 .reveal.is-visible{ opacity:1; transform:none; }
@@ -437,6 +540,11 @@ a{ color:var(--blue-ink); text-decoration:none; }
 </head>
 
 <body>
+<!-- THEME TOGGLE — fixed top-right; shows the moon in light mode, sun in dark -->
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark theme">
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+</button>
 <div class="layout">
 
   <!-- ====================================================================
@@ -551,6 +659,34 @@ a{ color:var(--blue-ink); text-decoration:none; }
         </li>
 
       </ol>
+    </section>
+
+    <!-- PROJECTS --------------------------------------------------------- -->
+    <section class="section" id="projects">
+      <h2 class="section-title">Projects</h2>
+      <article class="project-card reveal">
+        <div class="project-head">
+          <div>
+            <h3 class="project-title">All-in-One Appium Inspector</h3>
+            <p class="project-sub">Electron desktop app · mobile QA tooling</p>
+          </div>
+          <a class="project-link" href="https://github.com/emmalegrottaglie/appium-inspector-allinone" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+        <p>A fork of Appium Inspector rebuilt into a self-contained desktop QA app, so an entire mobile-testing workflow runs from one window — no global installs, no juggling terminals. I designed it around a single hardened process runner (<code>shell:false</code> spawns) with constrained IPC, where the renderer only ever sends intent and the main process builds every command from fixed templates.</p>
+        <ul class="project-points">
+          <li><strong>Bundled Appium server</strong> — start/stop a server shipped inside the app, with a full status lifecycle, <code>/status</code> readiness polling, and a streamed log.</li>
+          <li><strong>Driver &amp; plugin manager</strong> — install, update, doctor, and uninstall extensions into an app-isolated <code>APPIUM_HOME</code>, with security gating on install sources.</li>
+          <li><strong>In-app multi-language test runner</strong> — author and run tests in Python/pytest, Robot Framework, Ruby, and JavaScript/WebdriverIO, each in an isolated environment, with parsed pass/fail results.</li>
+          <li><strong>Raw WebDriver command panel</strong> — a Postman-style console that fires GET/POST/DELETE commands straight at the live session.</li>
+          <li><strong>Robust "scroll to &amp; tap" recorder</strong> — emits stable <code>scrollIntoView</code> locators instead of brittle coordinate swipes on Android.</li>
+        </ul>
+        <ul class="chips">
+          <li>Electron</li><li>React</li><li>Redux Toolkit</li><li>WebDriver</li><li>Node IPC</li><li>Python</li>
+        </ul>
+      </article>
     </section>
 
     <!-- SKILLS ----------------------------------------------------------- -->
@@ -843,6 +979,32 @@ const artworks = [
   window.addEventListener('scroll',  check, { passive: true });
   window.addEventListener('resize',  check, { passive: true });
   if (content) content.addEventListener('scroll', check, { passive: true });
+})();
+</script>
+<script>
+/* ==========================================================================
+   THEME TOGGLE
+   Flips data-theme on <html> and remembers the choice. Storage is wrapped in
+   try/catch so it degrades gracefully (e.g. in restricted sandboxes): the
+   toggle still works, it just won't persist across reloads there.
+   ========================================================================== */
+(function () {
+  const btn  = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  if (!btn) return;
+
+  function syncLabel() {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+  syncLabel();
+
+  btn.addEventListener('click', function () {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
 })();
 </script>
 </body>
