@@ -34,16 +34,21 @@ will then be published at https://emmalegrottaglie.github.io/interactivecv/.
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | The entire site — markup, inline CSS, and three inline scripts. |
+| `index.html` | The entire site — markup, inline CSS, and four inline scripts. |
 | `assets/emma-photo.jpg` | Sidebar portrait. |
 | `assets/art/` | Art portfolio images referenced by the gallery. |
 | `script.js`, `style.css` | **Unused.** Leftovers from an earlier typewriter-console version of the CV; `index.html` does not reference either file. See [Legacy files](#legacy-files). |
 
 ## Page structure
 
-`index.html` is a two-column layout: a fixed `.sidebar` (name, portrait, about,
-contact, theme toggle) and a scrolling `.content` column containing the
-sections `#experience`, `#projects`, `#skills`, `#education`, and `#portfolio`.
+`index.html` is a `.layout` grid of two columns that scroll independently
+inside a viewport-height frame: `.sidebar` (name, portrait, about, contact,
+theme toggle) on the left, and `.content` on the right holding the sections
+`#experience`, `#projects`, `#skills`, `#education`, and `#portfolio`. The frame
+itself is `height:100vh; overflow:hidden` — neither column is `position:fixed`;
+each just scrolls its own overflow. Below the 880px breakpoint the grid
+collapses to one column and the page returns to normal whole-page scrolling.
+
 A single `.lightbox` dialog lives at the end of the body and is reused for every
 artwork.
 
