@@ -477,6 +477,8 @@ a{ color:var(--blue-ink); text-decoration:none; }
   transition:transform .25s ease, box-shadow .25s ease;
 }
 .project-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift); }
+/* Stacked cards would otherwise sit border-to-border. */
+.project-card + .project-card{ margin-top:5px; }
 .project-head{
   display:flex; align-items:flex-start; justify-content:space-between;
   gap:16px; flex-wrap:wrap; margin-bottom:12px;
