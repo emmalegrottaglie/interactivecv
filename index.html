@@ -494,6 +494,13 @@ a{ color:var(--blue-ink); text-decoration:none; }
 }
 .project-link:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lift); }
 .project-link svg{ width:16px; height:16px; }
+/* A project can carry more than one link (live site + source). The second one
+   is outlined so the primary call to action stays the obvious one. */
+.project-links{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:none; }
+.project-link.secondary{
+  background:transparent; color:var(--blue-ink); border:1px solid var(--panel-line);
+}
+.project-link.secondary:hover{ background:var(--panel); }
 .project-card > p{ color:var(--ink-soft); font-size:.97rem; }
 .project-points{ list-style:none; margin:14px 0 16px; display:flex; flex-direction:column; gap:9px; }
 .project-points li{ position:relative; padding-left:20px; color:var(--ink-soft); font-size:.95rem; }
@@ -705,6 +712,36 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
         </ul>
         <ul class="chips">
           <li>Electron</li><li>React</li><li>Redux Toolkit</li><li>WebDriver</li><li>Node IPC</li><li>Python</li>
+        </ul>
+      </article>
+
+      <article class="project-card reveal">
+        <div class="project-head">
+          <div>
+            <h3 class="project-title">Seguir el Dinero</h3>
+            <p class="project-sub">Next.js dashboard · civic transparency</p>
+          </div>
+          <div class="project-links">
+            <a class="project-link" href="https://seguir-el-dinero.vercel.app" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
+              View live site
+            </a>
+            <a class="project-link secondary" href="https://github.com/emmalegrottaglie/seguir-el-dinero" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+        <p>A trilingual dashboard tracking the money behind Spanish political parties — the public subsidies they receive, the private donations they declare, and the politicians attached to them. The interesting problem was not fetching the data but refusing to publish it when it cannot be trusted, so the whole pipeline is built around verification gates and an in-app methodology page that states each source's real freshness and limits.</p>
+        <ul class="project-points">
+          <li><strong>Live subsidy feed</strong> — pulls party subsidies from the official BDNS/SNPSAP REST API on a daily Vercel cron, cached in Vercel KV with a filesystem fallback for local development.</li>
+          <li><strong>Self-checking vote fetcher</strong> — roll-call votes are pinned by hand and the fetcher refuses to publish any vote whose tally does not match the official Congreso record; a politician has a position only when their own vote is on record, never inferred from their party.</li>
+          <li><strong>Sourced portraits only</strong> — Wikimedia photos are attached on an exact article-title match and only under a reuse-permitting licence, with author and licence shown; everyone else gets initials rather than a stand-in photo of someone else.</li>
+          <li><strong>Verified social handles</strong> — each Bluesky account is checked one by one before a politician is added, because the platform's own identity checks are weak; unverifiable handles are excluded.</li>
+          <li><strong>Spanish, English and Catalan</strong> — full locale routing under the App Router, with the methodology and data caveats translated alongside the interface.</li>
+        </ul>
+        <ul class="chips">
+          <li>Next.js 15</li><li>TypeScript</li><li>React 19</li><li>Tailwind v4</li><li>Vercel KV</li><li>REST APIs</li><li>Python</li>
         </ul>
       </article>
     </section>
