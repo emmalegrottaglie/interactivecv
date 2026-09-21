@@ -711,7 +711,8 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
           <li><strong>Driver &amp; plugin manager</strong> — install, update, doctor, and uninstall extensions into an app-isolated <code>APPIUM_HOME</code>, with security gating on install sources.</li>
           <li><strong>In-app multi-language test runner</strong> — author and run tests in Python/pytest, Robot Framework, Ruby, and JavaScript/WebdriverIO, each in an isolated environment, with parsed pass/fail results.</li>
           <li><strong>Raw WebDriver command panel</strong> — a Postman-style console that fires GET/POST/DELETE commands straight at the live session.</li>
-          <li><strong>Robust "scroll to &amp; tap" recorder</strong> — emits stable <code>scrollIntoView</code> locators instead of brittle coordinate swipes on Android.</li>
+          <li><strong>Robust "scroll to &amp; tap" recorder</strong> — emits stable <code>scrollIntoView</code> locators instead of brittle coordinate swipes on Android, then a <strong>Save As</strong> export turns the recording into runnable code in 8 frameworks (Python, Java, C#, JavaScript, Ruby, Robot Framework, and more), so a recorded session becomes a real test file, not a one-off.</li>
+          <li><strong>16 cloud platform integrations</strong> — SauceLabs, BrowserStack, Perfecto, Kobiton, and a dozen others are wired in directly, so a session can run against a real device farm without leaving the app.</li>
         </ul>
         <ul class="chips">
           <li>Electron</li><li>React</li><li>Redux Toolkit</li><li>WebDriver</li><li>Node IPC</li><li>Python</li>
@@ -735,13 +736,14 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
             </a>
           </div>
         </div>
-        <p>A trilingual dashboard tracking the money behind Spanish political parties — the public subsidies they receive, the private donations they declare, and the politicians attached to them. The interesting problem was not fetching the data but refusing to publish it when it cannot be trusted, so the whole pipeline is built around verification gates and an in-app methodology page that states each source's real freshness and limits.</p>
+        <p>A trilingual dashboard tracking the money behind Spanish political parties — the public subsidies they receive, the private donations they declare, the foundations tied to them, and the politicians attached to them. The interesting problem was not fetching the data but refusing to publish it when it cannot be trusted, so the whole pipeline is built around verification gates and an in-app methodology page that states each source's real freshness and limits.</p>
         <ul class="project-points">
           <li><strong>Live subsidy feed</strong> — pulls party subsidies from the official BDNS/SNPSAP REST API on a daily Vercel cron, cached in Vercel KV with a filesystem fallback for local development.</li>
-          <li><strong>Self-checking vote fetcher</strong> — roll-call votes are pinned by hand and the fetcher refuses to publish any vote whose tally does not match the official Congreso record; a politician has a position only when their own vote is on record, never inferred from their party.</li>
+          <li><strong>Self-checking data pipeline</strong> — the vote fetcher refuses to publish any roll call whose tally does not match the official Congreso record, and build-time guard scripts cross-check chamber arithmetic and region naming before a deploy ships; that pipeline has already caught four real chamber-size errors and a set of reversed vote counts before they went live.</li>
+          <li><strong>Foundations audit</strong> — a new section tracing the 39 party-linked foundations named in Tribunal de Cuentas report n&ordm; 1.642, with per-entity funding breakdowns (party vs. corporate vs. individual money) and which entities were actually registered where the law requires it.</li>
           <li><strong>Sourced portraits only</strong> — Wikimedia photos are attached on an exact article-title match and only under a reuse-permitting licence, with author and licence shown; everyone else gets initials rather than a stand-in photo of someone else.</li>
           <li><strong>Verified social handles</strong> — each Bluesky account is checked one by one before a politician is added, because the platform's own identity checks are weak; unverifiable handles are excluded.</li>
-          <li><strong>Spanish, English and Catalan</strong> — full locale routing under the App Router, with the methodology and data caveats translated alongside the interface.</li>
+          <li><strong>Adversarially verified research</strong> — a hate-crime accountability piece was built from 26 sources and 124 individual claims, each put through a three-vote adversarial review before publication; roughly a sixth of the claims were rejected at that stage rather than shipped on trust.</li>
         </ul>
         <ul class="chips">
           <li>Next.js 15</li><li>TypeScript</li><li>React 19</li><li>Tailwind v4</li><li>Vercel KV</li><li>REST APIs</li><li>Python</li>
@@ -765,10 +767,11 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
           <li><strong>96 tests plus type checking</strong> &mdash; covering the detector, schedules, alerts, receiver directory, and station data, so a change to the signal maths has to prove it did not break the archive underneath it.</li>
           <li><strong>Tear-free waterfall</strong> &mdash; the canvas is twice the height of its viewport and every row is written twice, which keeps the spectrogram contiguous across the wrap boundary instead of shearing as it scrolls.</li>
           <li><strong>Honest liveness handling</strong> &mdash; <code>waitForSignal</code> holds eight seconds before calling a connection dead, separating a receiver that accepted the socket and then sent nothing from one that is simply slow on mobile data.</li>
-          <li><strong>Sourced archive</strong> &mdash; 141 stations, 186 transmission slots, and 776+ receivers filterable by SNR and browsable on a map. Station data comes from Priyom.org under CC BY-NC-SA, and schedules are labelled as dated listener reports rather than official timetables.</li>
+          <li><strong>Propagation-aware receiver picker</strong> &mdash; "Find one for me" auto-selects the best KiwiSDR node for a station, then draws the great-circle path on an SVG world map built from Natural Earth 110m data, so the pick is visible on a map rather than a black box, with no external tile requests made.</li>
+          <li><strong>Sourced archive with scheduled alerts</strong> &mdash; 141 stations (73 dated, with an ENIGMA designator decoder) across 186 transmission slots, with per-slot alerts firing 10 minutes ahead in both UTC and local time, and 776+ receivers filterable by SNR. Station data comes from Priyom.org under CC BY-NC-SA, and schedules are labelled as dated listener reports rather than official timetables.</li>
         </ul>
         <ul class="chips">
-          <li>React</li><li>TypeScript</li><li>Node.js</li><li>WebSocket</li><li>Canvas</li><li>Android build</li>
+          <li>React</li><li>TypeScript</li><li>Node.js</li><li>WebSocket</li><li>Canvas</li><li>Capacitor / Android</li>
         </ul>
       </article>
     </section>
