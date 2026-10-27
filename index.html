@@ -657,6 +657,7 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
               <li><strong>Bug Reporting.</strong> One of my main responsibilities is writing detailed bug reports after doing thorough investigations.</li>
               <li><strong>Technical Writing.</strong> With all good QA work comes writing documentation and so I do keep markup files in our repos documenting testing steps, focused on writing clear step-by-step guides on how our workflows function.</li>
               <li><strong>MCP Server Setups and Debugging.</strong> WolframAlpha now supports an MCP connection for Wolfram Language tools to be used with AI Coding agents, it's my responsibility researching new agents and adding them to our support package.</li>
+              <li><strong>Weekly AI Trends meetings.</strong> Every week I meet with the CEO and a small group close to him to discuss where AI is heading and how we can work with it.</li>
             </ul>
           </div>
         </li>
@@ -796,6 +797,36 @@ body, .sidebar, .content, .tl-card, .skill-group, .edu, .project-card,
         </ul>
         <ul class="chips">
           <li>JavaScript</li><li>HTML5</li><li>Node.js</li><li>WebRTC</li><li>Capacitor / Android</li>
+        </ul>
+      </article>
+
+      <article class="project-card reveal">
+        <div class="project-head">
+          <div>
+            <h3 class="project-title">Russian Bot Monitor</h3>
+            <p class="project-sub">Python data dashboard &middot; open-source investigation</p>
+          </div>
+          <div class="project-links">
+            <a class="project-link" href="https://emmalegrottaglie.github.io/Russian-Bot-Monitor/" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
+              View live site
+            </a>
+            <a class="project-link secondary" href="https://github.com/emmalegrottaglie/Russian-Bot-Monitor" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+        <p>An open dashboard built to test one claim: when Yandex data centres go offline, does activity in political communities on Reddit and Bluesky drop, and drop more than in communities that have nothing to do with politics? It lines up measured infrastructure outages against hourly community activity, keeps the full history, and publishes it as live charts, daily downloadable reports, and alerts. Most of the work went into making that comparison fair enough to mean something.</p>
+        <ul class="project-points">
+          <li><strong>Event study with a placebo test</strong> &mdash; activity in the 12 hours after each outage is compared with the same weekday and hour one to three weeks earlier, and the p-value comes from running the same statistic at random start times before the first outage. Every result is re-run across 6, 12 and 24-hour windows with shifted start times, and the method is sanity-checked on the outage itself, where it finds the expected drop in every cell.</li>
+          <li><strong>A control group in every comparison</strong> &mdash; non-political communities go through exactly the same test as the political ones, and every alert reports the control group's change alongside the signal, so a site-wide dip can't be mistaken for a targeted one.</li>
+          <li><strong>Cross-checked data</strong> &mdash; outages come from IODA and Cloudflare Radar, activity from Reddit (with an archive backfill) and Bluesky. Hourly Reddit counts were validated against an independent provider, agreeing with a median hourly correlation of 0.958.</li>
+          <li><strong>Findings stated as first results</strong> &mdash; the data so far shows no drop: right-wing Reddit communities ran above their normal range in 37 of 49 hours after the outages. A viral claim that 90 of 968 subreddits declined is tested against chance, where about 95 would be expected, and the README states plainly that correlation is not attribution.</li>
+          <li><strong>Citable daily reports and alerts</strong> &mdash; each day produces a report that is never edited afterwards (CSVs, JSON, a methods README and a zip bundle), and alerts fire on a 25% infrastructure or 30% group move against a 7-day same-hour baseline, with a 12-hour cooldown.</li>
+        </ul>
+        <ul class="chips">
+          <li>Python</li><li>pytest</li><li>IODA</li><li>Cloudflare Radar</li><li>Reddit API</li><li>Bluesky API</li><li>Docker</li><li>GitHub Pages</li>
         </ul>
       </article>
     </section>
