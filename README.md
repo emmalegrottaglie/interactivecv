@@ -4,6 +4,7 @@ A single-page personal CV and art portfolio for Emma Legrottaglie (QA Engineer &
 illustrator). It is a static site with no build step, no dependencies, and no
 server-side code: `index.html` is the whole application.
 
+Live site: https://emmalegrottaglie.github.io/interactivecv/
 Repository: https://github.com/emmalegrottaglie/interactivecv
 
 ## Quick start
@@ -23,12 +24,13 @@ Then visit http://localhost:8000.
 
 ## Deploying
 
-Deploying is a file copy — GitHub Pages, Netlify, or any static host will serve
-the repo root as-is.
+The site is hosted on GitHub Pages at
+https://emmalegrottaglie.github.io/interactivecv/, published straight from the
+root of `main`. Every push to `main` redeploys it; there is no build step. The
+empty `.nojekyll` file tells Pages to serve the files as they are instead of
+running them through Jekyll.
 
-GitHub Pages is not enabled on this repository yet. To turn it on: **Settings →
-Pages → Source: Deploy from a branch → Branch: `main` / `/ (root)`**. The site
-will then be published at https://emmalegrottaglie.github.io/interactivecv/.
+Any other static host works the same way, since deploying is a file copy.
 
 ## What's in the repo
 
